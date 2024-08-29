@@ -1,0 +1,39 @@
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.947);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: background-color 0.5s ease-out;
+}
+
+.splash-logo {
+    width: 200px;
+    height: auto;
+    transition: all 1s ease-in-out;
+}
+
+.splash-screen.stage-0 .splash-logo {
+    transform: scale(2);
+}
+
+.splash-screen.stage-1 .splash-logo {
+    transform: scale(1);
+}
+
+.splash-screen.stage-2 .splash-logo {
+    transform: scale(0.6) translate(75vw, -70vh);
+}
+
+.splash-screen.stage-3 {
+    background-color: transparent;
+}
+
+.splash-screen.stage-3 .splash-logo {
+    transform: scale(0.4) translate(calc(90vw - 20px), calc(-48vh + 20px));
+}

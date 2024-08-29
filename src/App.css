@@ -1,0 +1,85 @@
+/* Global styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  cursor: default;
+  background-color: #F1F2FF;
+}
+
+svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Calendar styles */
+.calendar-small {
+  width: 100% !important;
+  font-size: 0.75rem; /* Smaller font size for the calendar */
+}
+
+.react-calendar {
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+  background-color: white; /* White background */
+  padding: 0.5rem; /* Add some padding */
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2f72be5b; /* Navigation background color */
+  border-radius: 8px 8px 0 0; /* Rounded corners for the top */
+}
+
+.react-calendar__navigation button {
+  min-width: 30px !important;
+  background: none;
+  border: none;
+  color: #071952;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0.5rem 0.5rem;
+  font-size: 0.75rem; /* Smaller font size for the navigation buttons */
+}
+
+.react-calendar__navigation button:disabled {
+  color: #ccc; /* Disabled button color */
+}
+
+.react-calendar__tile {
+  border-radius: 0; /* Remove default rounded corners */
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  background-color: #fff;
+  color: #071952;
+  font-weight: 500;
+}
+
+.react-calendar__tile--now {
+  background: #fafae0; /* Background for current date */
+  color: #071952; /* Text color for current date */
+  border-radius: 50%; /* Rounded shape */
+}
+
+.react-calendar__tile--active {
+  background: #F6E04D; /* Background color for active tile */
+  color: white; /* Text color for active tile */
+  border-radius: 50%; /* Rounded shape for active tile */
+}
+
+
+.react-calendar__tile--range {
+  background: #071952ce; /* Background for range selection */
+  color: rgb(255, 255, 255); /* Text color for range selection */
+}
+
+.react-calendar__tile--rangeStart,
+.react-calendar__tile--rangeEnd {
+  border-radius: 50%; /* Rounded shape for range start and end */
+}
