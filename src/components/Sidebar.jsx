@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome,
@@ -10,19 +10,26 @@ import {
   FaFileContract,
   FaCog,
   FaCommentDots,
-  FaPencilAlt,
 } from "react-icons/fa";
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const storedProfilePic = localStorage.getItem("profilePic");
+    if (storedProfilePic) {
+      setProfilePic(storedProfilePic);
+    }
+  }, []);
 
   const handleLogout = () => {
     navigate("/");
   };
 
-  const handleArrowClick = () => {
+  const handleProfileClick = () => {
     navigate("/arrow"); // Navigate to the "/arrow" route defined in App.jsx
   };
 
@@ -65,9 +72,14 @@ const Sidebar = () => {
         <div
           className={`bg-black rounded-full flex items-center justify-center text-white text-xl transition-all duration-300 ease-out ${
             isExpanded ? "w-16 h-16" : "w-12 h-12"
-          }`}
+          } cursor-pointer`}
+          onClick={handleProfileClick}
         >
-          <span>SG</span>
+          <img
+            src={profilePic || "https://via.placeholder.com/150"}
+            alt="Profile"
+            className="w-full h-full rounded-full object-cover"
+          />
         </div>
         {isExpanded && (
           <div className="mt-2 text-center">
@@ -93,23 +105,6 @@ const Sidebar = () => {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Arrow Icon - Always Visible */}
-      <div
-        className={`mt-2 flex justify-center w-full ${
-          currentPath === "/arrow" ? "bg-white rounded-full p-2" : ""
-        }`}
-      >
-        <FaPencilAlt
-          className={`transition duration-300 cursor-pointer ${
-            currentPath === "/arrow"
-              ? "text-black" // Icon color when active
-              : "text-black hover:text-gray-600"
-          }`}
-          title="Go to New Page"
-          onClick={handleArrowClick}
-        />
       </div>
 
       {/* Sidebar Menu Section */}

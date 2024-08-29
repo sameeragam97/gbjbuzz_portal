@@ -11,6 +11,10 @@ import ApplicantTrackingPage from "./pages/hr-pages/ApplicantTrackingPage";
 import RequestManagementPage from "./pages/hr-pages/RequestManagementPage"
 import EmployeeManagementPage from "./pages/hr-pages/EmployeeManagementPage";
 import SalesHomePage from "./pages/sales-pages/SalesHomePage";
+import Employeepages from "./pages/employee-pages/EmployeePages";
+import EmpTasks from "./pages/employee-pages/EmpTasks";
+import Legal from "./pages/employee-pages/LegalPage";
+import EmployeeFeed from "./pages/employee-pages/EmplyeeFeed"
 
 function App() {
   return (
@@ -28,6 +32,11 @@ function App() {
         <Route path="/hr/request-management" element={<RequestManagementPage />} />
         <Route path="/hr/employee-management" element={<EmployeeManagementPage />} />
         <Route path="/sales-home" element={<SalesHomePage />} />
+        <Route path="/documents" element={<Document/>} />
+        <Route path="/arrow" element={<Employeepages/>} />
+        <Route path="/tasks" element={<EmpTasks/>} />
+        <Route path="/legal" element={<Legal/>} />
+        <Route path="/feedback" element={<EmployeeFeed/>} />
 
       </Routes>
     </Router>
