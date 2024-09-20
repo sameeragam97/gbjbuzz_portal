@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa'; // Import the search icon
+import DatePicker from 'react-datepicker'; // Import DatePicker
+import 'react-datepicker/dist/react-datepicker.css'; // Import DatePicker CSS
 
 const MiddleSection = () => {
   const [tasks, setTasks] = useState([
@@ -8,6 +10,12 @@ const MiddleSection = () => {
     { projectNumber: 'MD0456GH', description: 'Design user profile', status: 'In Progress', dueDate: '15 Jun' },
     { projectNumber: 'MD0789IJ', description: 'Fix bugs in API', status: 'Returned', dueDate: '18 Jun' },
     { projectNumber: 'MD0123KL', description: 'Update database schema', status: 'Approved', dueDate: '22 Jun' },
+  ]);
+
+  const [tasksManagement, setTasksManagement] = useState([
+    { projectNumber: 'MD0987LM', description: 'Update UI', status: 'Pending', dueDate: '05 Jul' },
+    { projectNumber: 'MD0654NO', description: 'Integrate API', status: 'In Progress', dueDate: '10 Jul' },
+    { projectNumber: 'MD0234PQ', description: 'Fix UI bugs', status: 'Returned', dueDate: '15 Jul' },
   ]);
 
   const [filteredTasks, setFilteredTasks] = useState(tasks); // For displaying filtered tasks
@@ -19,6 +27,7 @@ const MiddleSection = () => {
     dueDate: ''
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeButton, setActiveButton] = useState('My Tasks'); // State for active button
 
   const handleAddTaskClick = () => {
     setIsModalOpen(true);
@@ -37,16 +46,21 @@ const MiddleSection = () => {
   };
 
   const handleAddTask = () => {
-    const updatedTasks = [newTask, ...tasks];
-    setTasks(updatedTasks);
-    setFilteredTasks(updatedTasks); // Update filtered tasks
+    if (activeButton === 'My Tasks') {
+      const updatedTasks = [newTask, ...tasks];
+      setTasks(updatedTasks);
+      setFilteredTasks(updatedTasks); // Update filtered tasks
+    } else {
+      const updatedTasksManagement = [newTask, ...tasksManagement];
+      setTasksManagement(updatedTasksManagement);
+    }
     handleModalClose();
   };
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    const filtered = tasks.filter(task =>
+    const filtered = (activeButton === 'My Tasks' ? tasks : tasksManagement).filter(task =>
       task.projectNumber.toLowerCase().includes(query.toLowerCase()) ||
       task.description.toLowerCase().includes(query.toLowerCase())
     );
@@ -54,17 +68,30 @@ const MiddleSection = () => {
   };
 
   const handleDeleteTask = (index) => {
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
-    setFilteredTasks(updatedTasks); // Update filtered tasks
+    if (activeButton === 'My Tasks') {
+      const updatedTasks = tasks.filter((_, i) => i !== index);
+      setTasks(updatedTasks);
+      setFilteredTasks(updatedTasks); // Update filtered tasks
+    } else {
+      const updatedTasksManagement = tasksManagement.filter((_, i) => i !== index);
+      setTasksManagement(updatedTasksManagement);
+    }
   };
 
   const handleStatusChange = (e, index) => {
-    const updatedTasks = tasks.map((task, i) =>
+    const updatedTasks = (activeButton === 'My Tasks' ? tasks : tasksManagement).map((task, i) =>
       i === index ? { ...task, status: e.target.value } : task
     );
-    setTasks(updatedTasks);
-    setFilteredTasks(updatedTasks); // Update filtered tasks
+    if (activeButton === 'My Tasks') {
+      setTasks(updatedTasks);
+      setFilteredTasks(updatedTasks); // Update filtered tasks
+    } else {
+      setTasksManagement(updatedTasks);
+    }
+  };
+
+  const handleDateChange = (date) => {
+    setNewTask({ ...newTask, dueDate: date ? date.toISOString().split('T')[0] : '' });
   };
 
   const getStatusColor = (status) => {
@@ -82,143 +109,172 @@ const MiddleSection = () => {
     }
   };
 
-  return (
-    <div className="flex-1 p-6">
-      {/* Header Section */}
-      <div className="mb-12"> {/* Increased margin-bottom */}
-        <h1 className="text-4xl font-bold">
-          <span className="text-yellow-500">Employee</span> Tasks
-        </h1>
-        <div className="flex space-x-4 mt-8"> {/* Increased margin-top */}
-          <div className="bg-white p-4 rounded shadow-lg text-center flex-1">
-            <h2 className="text-2xl font-bold text-purple-600">2</h2>
-            <p className="text-gray-600">Today</p>
-            <p className="text-gray-500">27.77%</p>
-          </div>
-          <div className="bg-white p-4 rounded shadow-lg text-center flex-1">
-            <h2 className="text-2xl font-bold text-red-600">5</h2>
-            <p className="text-gray-600">Returned</p>
-            <p className="text-gray-500">27.77%</p>
-          </div>
-          <div className="bg-white p-4 rounded shadow-lg text-center flex-1">
-            <h2 className="text-2xl font-bold text-yellow-600">11</h2>
-            <p className="text-gray-600">Pending</p>
-            <p className="text-gray-500">61.11%</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Task List Section */}
-      <div className="bg-white p-6 rounded shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Task List</h2> {/* Added heading */}
-        <div className="flex items-center mb-4">
-          <div className="relative w-full mr-4">
-            <FaSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full pl-8 border px-4 py-2 rounded-lg"
-            />
-          </div>
-          <button className="bg-yellow-500 text-white p-2 rounded" onClick={handleAddTaskClick}>
-            Add new task +
-          </button>
-        </div>
-
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2">Project Number</th>
-              <th className="py-2">Description</th>
-              <th className="py-2">Status</th>
-              <th className="py-2">Due Date</th>
-              <th className="py-2">Action</th>
+  const renderTable = () => {
+    return (
+      <table className="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th className="py-2">Project Number</th>
+            <th className="py-2">Description</th>
+            <th className="py-2">Status</th>
+            <th className="py-2">Due Date</th>
+            <th className="py-2">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(activeButton === 'My Tasks' ? filteredTasks : tasksManagement).map((task, index) => (
+            <tr key={index} className="text-center">
+              <td className="py-2">{task.projectNumber}</td>
+              <td className="py-2">{task.description}</td>
+              <td className="py-2">
+                <div className="flex items-center justify-center">
+                  <span className={`status-circle ${getStatusColor(task.status)}`}></span>
+                  <select
+                    value={task.status}
+                    onChange={(e) => handleStatusChange(e, index)}
+                    className={`border px-2 py-1 rounded-lg ${getStatusColor(task.status)}`}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Returned">Returned</option>
+                    <option value="Approved">Approved</option>
+                  </select>
+                </div>
+              </td>
+              <td className="py-2">{task.dueDate}</td>
+              <td className="py-2">
+                <button className="text-red-500" onClick={() => handleDeleteTask(index)}>
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredTasks.map((task, index) => (
-              <tr key={index} className="text-center">
-                <td className="py-2">{task.projectNumber}</td>
-                <td className="py-2">{task.description}</td>
-                <td className="py-2">
-                  <div className="flex items-center justify-center">
-                    <span className={`status-circle ${getStatusColor(task.status)}`}></span>
-                    <select
-                      value={task.status}
-                      onChange={(e) => handleStatusChange(e, index)}
-                      className={`border px-2 py-1 rounded-lg ${getStatusColor(task.status)}`}
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Returned">Returned</option>
-                      <option value="Approved">Approved</option>
-                    </select>
-                  </div>
-                </td>
-                <td className="py-2">{task.dueDate}</td>
-                <td className="py-2">
-                  <button className="text-red-500" onClick={() => handleDeleteTask(index)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  return (
+    <div className="flex-1 mx-3 max-w-5xl mt-10">
+      {/* Main Content Section */}
+      <div>
+        {/* Header Section */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold">
+            <span className="text-yellow-500">Employee</span> Tasks
+          </h1>
+          {/* Section Type Buttons */}
+          <div className="flex space-x-4 mt-4 mb-6">
+            <button
+              className={`py-2 px-4 rounded-lg border-b-2 ${activeButton === 'My Tasks' ? 'border-yellow-500' : 'border-transparent'} hover:border-yellow-500 focus:outline-none`}
+              onClick={() => {
+                setActiveButton('My Tasks');
+                setFilteredTasks(tasks); // Reset filtered tasks to show all tasks when "My Tasks" is active
+                setSearchQuery(''); // Clear search query
+              }}
+            >
+              My Tasks
+            </button>
+            <button
+              className={`py-2 px-4 rounded-lg border-b-2 ${activeButton === 'Tasks Management' ? 'border-yellow-500' : 'border-transparent'} hover:border-yellow-500 focus:outline-none`}
+              onClick={() => {
+                setActiveButton('Tasks Management');
+                setFilteredTasks(tasksManagement); // Reset filtered tasks to show all tasks when "Tasks Management" is active
+                setSearchQuery(''); // Clear search query
+              }}
+            >
+              Tasks Management
+            </button>
+          </div>
+          <div className="flex space-x-3 mt-4">
+            <div className="bg-white p-3 rounded shadow-lg text-center flex-1">
+              <h2 className="text-xl font-bold text-purple-600">2</h2>
+              <p className="text-gray-600">Today</p>
+              <p className="text-gray-500">27.77%</p>
+            </div>
+            <div className="bg-white p-3 rounded shadow-lg text-center flex-1">
+              <h2 className="text-xl font-bold text-red-600">5</h2>
+              <p className="text-gray-600">Returned</p>
+              <p className="text-gray-500">27.77%</p>
+            </div>
+            <div className="bg-white p-3 rounded shadow-lg text-center flex-1">
+              <h2 className="text-xl font-bold text-yellow-600">10</h2>
+              <p className="text-gray-600">Pending</p>
+              <p className="text-gray-500">27.77%</p>
+            </div>
+          </div>
+          <div className="mt-6 flex justify-between items-center">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full border border-gray-300 p-2 rounded-md"
+              />
+              <FaSearch className="absolute right-3 top-2 text-gray-500" />
+            </div>
+            {activeButton === 'Tasks Management' && (
+              <button
+                onClick={handleAddTaskClick}
+                className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+              >
+                Add New Task +
+              </button>
+            )}
+          </div>
+          {renderTable()}
+        </div>
       </div>
 
-      {/* Add Task Modal */}
+      {/* Modal for Adding New Task */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4 text-yellow-500">Add New Task</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 className="text-2xl font-bold mb-4">Add New Task</h2>
             <input
               type="text"
               name="projectNumber"
-              placeholder="Project Number"
               value={newTask.projectNumber}
               onChange={handleInputChange}
-              className="w-full mb-4 border px-4 py-2 rounded-lg"
+              placeholder="Project Number"
+              className="border border-gray-300 p-2 rounded-md w-full mb-2"
             />
             <input
               type="text"
               name="description"
-              placeholder="Task Description"
               value={newTask.description}
               onChange={handleInputChange}
-              className="w-full mb-4 border px-4 py-2 rounded-lg"
+              placeholder="Description"
+              className="border border-gray-300 p-2 rounded-md w-full mb-2"
             />
             <select
               name="status"
               value={newTask.status}
               onChange={handleInputChange}
-              className="w-full mb-4 border px-4 py-2 rounded-lg"
+              className="border border-gray-300 p-2 rounded-md w-full mb-2"
             >
               <option value="Pending">Pending</option>
               <option value="In Progress">In Progress</option>
               <option value="Returned">Returned</option>
               <option value="Approved">Approved</option>
             </select>
-            <input
-              type="text"
-              name="dueDate"
-              placeholder="Due Date"
-              value={newTask.dueDate}
-              onChange={handleInputChange}
-              className="w-full mb-4 border px-4 py-2 rounded-lg"
+            <DatePicker
+              selected={newTask.dueDate ? new Date(newTask.dueDate) : null}
+              onChange={handleDateChange}
+              className="border border-gray-300 p-2 rounded-md w-full mb-4"
+              placeholderText="Due Date"
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end space-x-4">
               <button
-                className="bg-gray-500 text-white py-2 px-4 rounded-lg mr-4 hover:bg-gray-600"
                 onClick={handleModalClose}
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
               >
                 Cancel
               </button>
               <button
-                className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
                 onClick={handleAddTask}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               >
                 Add Task
               </button>

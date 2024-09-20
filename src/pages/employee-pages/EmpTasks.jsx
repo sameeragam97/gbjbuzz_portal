@@ -1,14 +1,13 @@
 import React from 'react'
 import Sidebar from '../../components/Sidebar'
 import EmployeeTasks from '../../components/employee-components/EmployeeTasks'
-import RightSidebar from '../../components/employee-components/RightSidebar'
-
+import RightSidebar2 from '../../components/employee-components/RightSIdebar2';
 const Employeepages = () => {
   return (
     <div className="flex">
     <Sidebar />
     <EmployeeTasks/>
-    <RightSidebar/>
+    <RightSidebar2/>
   </div>
   )
 }
