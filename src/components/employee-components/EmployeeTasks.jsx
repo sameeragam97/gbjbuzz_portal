@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa'; // Import the search icon
-import DatePicker from 'react-datepicker'; // Import DatePicker
-import 'react-datepicker/dist/react-datepicker.css'; // Import DatePicker CSS
+import { FaSearch } from 'react-icons/fa';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const MiddleSection = () => {
   const [tasks, setTasks] = useState([
-    { projectNumber: 'MD0345EF', description: 'Print table website', status: 'Approved', dueDate: '10 Jun' },
-    { projectNumber: 'MD0345EF', description: 'Create a portal', status: 'Pending', dueDate: '12 Jun' },
-    { projectNumber: 'MD0456GH', description: 'Design user profile', status: 'In Progress', dueDate: '15 Jun' },
-    { projectNumber: 'MD0789IJ', description: 'Fix bugs in API', status: 'Returned', dueDate: '18 Jun' },
-    { projectNumber: 'MD0123KL', description: 'Update database schema', status: 'Approved', dueDate: '22 Jun' },
+    { projectNumber: 'MD0345EF', assignedTo: 'Update Ui', status: 'Approved', dueDate: '10 Jun' },
+    { projectNumber: 'MD0345EF', assignedTo: 'Update Ui', status: 'Pending', dueDate: '12 Jun' },
+    { projectNumber: 'MD0456GH', assignedTo: 'Update Ui', status: 'In Progress', dueDate: '15 Jun' },
+    { projectNumber: 'MD0789IJ', assignedTo: 'Update Ui', status: 'Returned', dueDate: '18 Jun' },
+    { projectNumber: 'MD0123KL', assignedTo: 'Update Ui', status: 'Approved', dueDate: '22 Jun' },
   ]);
 
   const [tasksManagement, setTasksManagement] = useState([
-    { projectNumber: 'MD0987LM', description: 'Update UI', status: 'Pending', dueDate: '05 Jul' },
-    { projectNumber: 'MD0654NO', description: 'Integrate API', status: 'In Progress', dueDate: '10 Jul' },
-    { projectNumber: 'MD0234PQ', description: 'Fix UI bugs', status: 'Returned', dueDate: '15 Jul' },
+    { projectNumber: 'MD0987LM', assignedTo: 'Rachel Zane', status: 'Pending', dueDate: '05 Jul' },
+    { projectNumber: 'MD0654NO', assignedTo: 'Louis Litt', status: 'In Progress', dueDate: '10 Jul' },
+    { projectNumber: 'MD0234PQ', assignedTo: 'Donna Paulsen', status: 'Returned', dueDate: '15 Jul' },
   ]);
 
-  const [filteredTasks, setFilteredTasks] = useState(tasks); // For displaying filtered tasks
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTask, setNewTask] = useState({
     projectNumber: '',
-    description: '',
+    assassignedTo: '',
     status: 'Pending',
-    dueDate: ''
+    dueDate: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeButton, setActiveButton] = useState('My Tasks'); // State for active button
+  const [activeButton, setActiveButton] = useState('My Tasks');
 
   const handleAddTaskClick = () => {
     setIsModalOpen(true);
@@ -35,7 +35,7 @@ const MiddleSection = () => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setNewTask({ projectNumber: '', description: '', status: 'Pending', dueDate: '' });
+    setNewTask({ projectNumber: '', assignedTo: '', status: 'Pending', dueDate: '' });
   };
 
   const handleInputChange = (e) => {
@@ -49,7 +49,7 @@ const MiddleSection = () => {
     if (activeButton === 'My Tasks') {
       const updatedTasks = [newTask, ...tasks];
       setTasks(updatedTasks);
-      setFilteredTasks(updatedTasks); // Update filtered tasks
+      setFilteredTasks(updatedTasks);
     } else {
       const updatedTasksManagement = [newTask, ...tasksManagement];
       setTasksManagement(updatedTasksManagement);
@@ -62,7 +62,7 @@ const MiddleSection = () => {
     setSearchQuery(query);
     const filtered = (activeButton === 'My Tasks' ? tasks : tasksManagement).filter(task =>
       task.projectNumber.toLowerCase().includes(query.toLowerCase()) ||
-      task.description.toLowerCase().includes(query.toLowerCase())
+      task.assignedTo.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredTasks(filtered);
   };
@@ -71,7 +71,7 @@ const MiddleSection = () => {
     if (activeButton === 'My Tasks') {
       const updatedTasks = tasks.filter((_, i) => i !== index);
       setTasks(updatedTasks);
-      setFilteredTasks(updatedTasks); // Update filtered tasks
+      setFilteredTasks(updatedTasks);
     } else {
       const updatedTasksManagement = tasksManagement.filter((_, i) => i !== index);
       setTasksManagement(updatedTasksManagement);
@@ -84,7 +84,7 @@ const MiddleSection = () => {
     );
     if (activeButton === 'My Tasks') {
       setTasks(updatedTasks);
-      setFilteredTasks(updatedTasks); // Update filtered tasks
+      setFilteredTasks(updatedTasks);
     } else {
       setTasksManagement(updatedTasks);
     }
@@ -110,22 +110,30 @@ const MiddleSection = () => {
   };
 
   const renderTable = () => {
+    const isManagement = activeButton === 'Tasks Management';
     return (
       <table className="min-w-full bg-white">
         <thead>
           <tr>
             <th className="py-2">Project Number</th>
-            <th className="py-2">Description</th>
-            <th className="py-2">Status</th>
-            <th className="py-2">Due Date</th>
+            <th className="py-2">{isManagement ? 'Assigned To' : 'Assigned To'}</th>
+            <th className="py-2">{isManagement ? 'Details' : 'Due Date'}</th>
+            <th className="py-2">{isManagement ? 'Review Status' : 'Status'}</th>
             <th className="py-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {(activeButton === 'My Tasks' ? filteredTasks : tasksManagement).map((task, index) => (
+          {(isManagement ? tasksManagement : filteredTasks).map((task, index) => (
             <tr key={index} className="text-center">
               <td className="py-2">{task.projectNumber}</td>
-              <td className="py-2">{task.description}</td>
+              <td className="py-2">{task.assignedTo}</td>
+              <td className="py-2">
+                {isManagement ? (
+                  <button className="bg-blue-500 text-white px-2 py-1 rounded">Details</button>
+                ) : (
+                  task.dueDate
+                )}
+              </td>
               <td className="py-2">
                 <div className="flex items-center justify-center">
                   <span className={`status-circle ${getStatusColor(task.status)}`}></span>
@@ -141,7 +149,6 @@ const MiddleSection = () => {
                   </select>
                 </div>
               </td>
-              <td className="py-2">{task.dueDate}</td>
               <td className="py-2">
                 <button className="text-red-500" onClick={() => handleDeleteTask(index)}>
                   Delete
@@ -156,21 +163,18 @@ const MiddleSection = () => {
 
   return (
     <div className="flex-1 mx-3 max-w-5xl mt-10">
-      {/* Main Content Section */}
       <div>
-        {/* Header Section */}
         <div className="mb-6">
           <h1 className="text-4xl font-bold">
             <span className="text-yellow-500">Employee</span> Tasks
           </h1>
-          {/* Section Type Buttons */}
           <div className="flex space-x-4 mt-4 mb-6">
             <button
               className={`py-2 px-4 rounded-lg border-b-2 ${activeButton === 'My Tasks' ? 'border-yellow-500' : 'border-transparent'} hover:border-yellow-500 focus:outline-none`}
               onClick={() => {
                 setActiveButton('My Tasks');
-                setFilteredTasks(tasks); // Reset filtered tasks to show all tasks when "My Tasks" is active
-                setSearchQuery(''); // Clear search query
+                setFilteredTasks(tasks);
+                setSearchQuery('');
               }}
             >
               My Tasks
@@ -179,8 +183,8 @@ const MiddleSection = () => {
               className={`py-2 px-4 rounded-lg border-b-2 ${activeButton === 'Tasks Management' ? 'border-yellow-500' : 'border-transparent'} hover:border-yellow-500 focus:outline-none`}
               onClick={() => {
                 setActiveButton('Tasks Management');
-                setFilteredTasks(tasksManagement); // Reset filtered tasks to show all tasks when "Tasks Management" is active
-                setSearchQuery(''); // Clear search query
+                setFilteredTasks(tasksManagement);
+                setSearchQuery('');
               }}
             >
               Tasks Management
@@ -200,82 +204,94 @@ const MiddleSection = () => {
             <div className="bg-white p-3 rounded shadow-lg text-center flex-1">
               <h2 className="text-xl font-bold text-yellow-600">10</h2>
               <p className="text-gray-600">Pending</p>
-              <p className="text-gray-500">27.77%</p>
+              <p className="text-gray-500">50.00%</p>
+            </div>
+            <div className="bg-white p-3 rounded shadow-lg text-center flex-1">
+              <h2 className="text-xl font-bold text-green-600">3</h2>
+              <p className="text-gray-600">Approved</p>
+              <p className="text-gray-500">15.55%</p>
             </div>
           </div>
-          <div className="mt-6 flex justify-between items-center">
-            <div className="relative flex-1">
+          <div className="flex items-center mt-6">
+            <div className="flex-1 flex items-center bg-white border rounded-lg px-4 py-2">
+              <FaSearch className="text-gray-500" />
               <input
                 type="text"
                 placeholder="Search tasks..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="w-full border border-gray-300 p-2 rounded-md"
+                className="ml-2 w-full outline-none"
               />
-              <FaSearch className="absolute right-3 top-2 text-gray-500" />
             </div>
             {activeButton === 'Tasks Management' && (
               <button
+                className="ml-4 py-2 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
                 onClick={handleAddTaskClick}
-                className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
               >
-                Add New Task +
+                Add Task+
               </button>
             )}
           </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {renderTable()}
         </div>
       </div>
 
-      {/* Modal for Adding New Task */}
+      {/* Modal for Adding Task */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4">Add New Task</h2>
-            <input
-              type="text"
-              name="projectNumber"
-              value={newTask.projectNumber}
-              onChange={handleInputChange}
-              placeholder="Project Number"
-              className="border border-gray-300 p-2 rounded-md w-full mb-2"
-            />
-            <input
-              type="text"
-              name="description"
-              value={newTask.description}
-              onChange={handleInputChange}
-              placeholder="Description"
-              className="border border-gray-300 p-2 rounded-md w-full mb-2"
-            />
-            <select
-              name="status"
-              value={newTask.status}
-              onChange={handleInputChange}
-              className="border border-gray-300 p-2 rounded-md w-full mb-2"
-            >
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Returned">Returned</option>
-              <option value="Approved">Approved</option>
-            </select>
-            <DatePicker
-              selected={newTask.dueDate ? new Date(newTask.dueDate) : null}
-              onChange={handleDateChange}
-              className="border border-gray-300 p-2 rounded-md w-full mb-4"
-              placeholderText="Due Date"
-            />
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={handleModalClose}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            <div className="mb-4">
+              <label className="block mb-2">Project Number</label>
+              <input
+                type="text"
+                name="projectNumber"
+                value={newTask.projectNumber}
+                onChange={handleInputChange}
+                className="border px-4 py-2 w-full rounded-lg"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Assigned To</label>
+              <input
+                type="text"
+                name="assignedTo"
+                value={newTask.assignedTo}
+                onChange={handleInputChange}
+                className="border px-4 py-2 w-full rounded-lg"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Due Date</label>
+              <DatePicker
+                selected={newTask.dueDate ? new Date(newTask.dueDate) : null}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+                className="border px-4 py-2 w-full rounded-lg"
+                placeholderText="Select due date"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Status</label>
+              <select
+                name="status"
+                value={newTask.status}
+                onChange={handleInputChange}
+                className="border px-4 py-2 w-full rounded-lg"
               >
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Returned">Returned</option>
+                <option value="Approved">Approved</option>
+              </select>
+            </div>
+            <div className="flex justify-end">
+              <button className="bg-red-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-red-600" onClick={handleModalClose}>
                 Cancel
               </button>
-              <button
-                onClick={handleAddTask}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              >
+              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" onClick={handleAddTask}>
                 Add Task
               </button>
             </div>
